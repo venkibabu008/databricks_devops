@@ -1,0 +1,71 @@
+-------------------------------------------------------------------------------------------------------------------------------------
+Stage1
+Upload /Index reports
+Recap on EDM index - PP
+1. EDM Client Tool
+2. OV creds
+3. generate EDM creds from UAM
+Administration - > Developer -> Credentials
+4. connect via EDM client tool
+5. Upload the EDM reports -> verify last update time in Data Classification
+6. Test on report uploaded, verify DLP incident EDM matches
+7. Delete EDM creds
+8. Delete MicroStrategy download reports
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Stage2
+Define Rule condition
+Data Classification -> EDM -> Report update check
+
+Creation of Detectors
+Name, desc, expression 
+single expression
+edmscore('Report name[fieldname1&&fieldname2&&...fieldnamen]', unique) threshold
+
+multiple expression
+edmscore('Report name[fieldname1&&fieldname2&&...fieldnamen]', unique) threshold ||
+edmscore('Report name[fieldname1&&fieldname2&&...fieldnamen]', unique) threshold
+
+PII
+block >=10 
+monitor >=2 to <=9
+
+Block
+edmscore('HR-Address[EmailIDPersonal&&BankAN&&PhoneMobile]', unique) >=10
+Monitor
+(edmscore('HR-Address[Country&&BankID&&Address1]', unique)>=2 && edmscore('HR-Address[Country&&BankID&&Address1]', unique)<=9)||
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Stage 2.1
+Mapping to Scan Cloud "PPS"
+PPS
+Data Classes -> find name -> add detectors -> save
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Stage3
+Rule Configuration of multi-column EDM - PP
+
+sc_precondition_detectorname  | Exception S, R, mail /file properties + email data
+sc_action_detectorname        | Action - Block, Monitor &  HR data
+
+Stage1+2+3
+Email: Detector /HR data
+Sender/Recipient/Mail condition: Based checklist sc_pre
+Action sc_action (Data)
+
+
+
+
+Email flow of EDM
+
+User -> exchange -> DLP (Scancloud, PPS) -> SEG -> Internet
+
+Scan cloud (EDM -> Detectors -> Data classes (PPS)) -> PPS /PoD console -> Incident recorded
+
+
+-----------------------------
+
+
